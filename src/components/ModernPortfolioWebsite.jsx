@@ -312,7 +312,7 @@ const galleryImages = imageData.map((image, index) => {
           </div>
         </div>
 
-        {/* Navigation Links */}
+        
         {/* Navigation Buttons */}
 <div className="flex flex-wrap justify-center gap-6 fade-in-up">
   {/* Email Button */}
@@ -380,32 +380,34 @@ const galleryImages = imageData.map((image, index) => {
         <div className="flex space-x-8 animate-scroll-left">
           {[...galleryImages, ...galleryImages].map((image, index) => (
             <div
-              key={`${image.id}-${index}`}
-              className="flex-shrink-0 group cursor-pointer"
-            >
-              <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-105">
-                <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
-                  <img
-                    src={image.src}
-                    alt={image.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                  <div className="absolute inset-0 flex flex-col justify-end p-8">
-                    <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="text-sm opacity-80 mb-2">{image.category}</p>
-                      <h3 className="text-2xl font-light">{image.title}</h3>
+                key={`${image.id}-${index}`}
+                className="flex-shrink-0 group cursor-pointer"
+                style={{ scrollSnapAlign: 'start' }}
+              >
+                <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl transition-transform duration-700 transform group-hover:rotate-3 group-hover:scale-105 group-hover:shadow-2xl">
+                  <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
+                    <img
+                      src={image.src}
+                      alt={image.title}
+                      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                    <div className="absolute inset-0 flex flex-col justify-end p-8">
+                      <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <p className="text-sm opacity-80 mb-2">{image.category}</p>
+                        <h3 className="text-2xl font-light">{image.title}</h3>
+                      </div>
                     </div>
-                  </div>
-                  <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
-                    <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
+                    <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
+                      <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+
           ))}
         </div>
       </div>
@@ -425,33 +427,34 @@ const galleryImages = imageData.map((image, index) => {
         >
           {galleryImages.map((image, index) => (
             <div
-              key={`${image.id}-${index}`}
-              className="flex-shrink-0 group cursor-pointer"
-              style={{ scrollSnapAlign: 'start' }}
-            >
-              <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-105">
-                <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
-                  <img
-                    src={image.src}
-                    alt={image.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                  <div className="absolute inset-0 flex flex-col justify-end p-8">
-                    <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="text-sm opacity-80 mb-2">{image.category}</p>
-                      <h3 className="text-2xl font-light">{image.title}</h3>
+                key={`${image.id}-${index}`}
+                className="flex-shrink-0 group cursor-pointer"
+                style={{ scrollSnapAlign: 'start' }}
+              >
+                <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl transition-transform duration-700 transform group-hover:rotate-3 group-hover:scale-105 group-hover:shadow-2xl">
+                  <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
+                    <img
+                      src={image.src}
+                      alt={image.title}
+                      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                    <div className="absolute inset-0 flex flex-col justify-end p-8">
+                      <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <p className="text-sm opacity-80 mb-2">{image.category}</p>
+                        <h3 className="text-2xl font-light">{image.title}</h3>
+                      </div>
                     </div>
-                  </div>
-                  <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
-                    <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
+                    <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
+                      <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+
           ))}
         </div>
       </div>

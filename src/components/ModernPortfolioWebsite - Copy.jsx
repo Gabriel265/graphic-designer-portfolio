@@ -1,25 +1,68 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, Mail, Download, ExternalLink, Globe, Camera, Palette, Code } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Mail, Download, ExternalLink, Globe, Camera, Palette, Code, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const ModernPortfolioWebsite = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(0.5);
+  const [galleryScrollPosition, setGalleryScrollPosition] = useState(0);
   const videoRef = useRef(null);
+  const galleryRef = useRef(null);
 
-  const galleryImages = [
-    { id: 1, title: "Abstract Fusion", category: "Digital Art", color: "from-orange-500 to-purple-600" },
-    { id: 2, title: "Cosmic Dreams", category: "3D Render", color: "from-purple-500 to-pink-600" },
-    { id: 3, title: "Urban Landscapes", category: "Photography", color: "from-amber-500 to-red-600" },
-    { id: 4, title: "Fluid Dynamics", category: "Motion Graphics", color: "from-orange-600 to-purple-500" },
-    { id: 5, title: "Ethereal Moments", category: "Digital Art", color: "from-purple-600 to-indigo-600" },
-    { id: 6, title: "Golden Hour", category: "Photography", color: "from-yellow-500 to-orange-600" },
-  ];
+  const imageData = [
+  { filename: 'Lazybee.jpg', tag: 'Logos' },
+  { filename: 'Lazybee_2.jpg', tag: 'Logos' },
+  { filename: 'wedding_1.jpg', tag: 'Posters' },
+  { filename: 'wedding_2.jpg', tag: 'Posters' },
+  { filename: 'nike.jpg', tag: 'Branding' },
+  { filename: 'nike_2.jpg', tag: 'Branding' },
+  { filename: 'Kadion-Systems.jpg', tag: 'Logos' },
+  { filename: 'Kaycee-Tutoring.jpg', tag: 'Logos' },
+  { filename: 'wedding_3.jpg', tag: 'Posters' },
+  { filename: 'wedding_4.jpg', tag: 'Posters' },
+  { filename: 'imperfection.jpg', tag: 'Branding' },
+  { filename: 'k-dot.jpg', tag: 'Branding' },
+  { filename: 'wedding_5.jpg', tag: 'Posters' },
+  { filename: 'wedding_6.jpg', tag: 'Posters' },
+  { filename: 'wedding_8.jpg', tag: 'Posters' },
+  { filename: 'wedding_9.jpg', tag: 'Posters' },
+  { filename: 'boxing-day.jpg', tag: 'Branding' },
+  { filename: 'contract.jpg', tag: 'Branding' },
+  { filename: 'dice.jpg', tag: 'Branding' },
+  { filename: 'goal.jpg', tag: 'Branding' },
+  { filename: 'kendrick_Lamar.jpg', tag: 'Branding' },
+  { filename: 'planet.jpg', tag: 'Branding' }
+];
+
+const galleryImages = imageData.map((image, index) => {
+  let color;
+  switch (image.tag) {
+    case 'Logos':
+      color = "from-purple-500 to-pink-600";
+      break;
+    case 'Posters':
+      color = "from-orange-500 to-purple-600";
+      break;
+    case 'Branding':
+      color = "from-amber-500 to-red-600";
+      break;
+    default:
+      color = "from-gray-400 to-gray-600";
+  }
+
+  return {
+    id: index + 1,
+    title: image.filename.replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+    category: image.tag,
+    color,
+    src: `/portfolio/${image.filename}`
+  };
+});
 
   const navLinks = [
     { icon: Globe, label: "Portfolio", href: "#portfolio" },
     { icon: Camera, label: "Gallery", href: "#gallery" },
-    { icon: Palette, label: "Art", href: "#art" },
+    { icon: Palette, label: "Gallery", href: "#gallery" },
     { icon: Code, label: "Projects", href: "#projects" },
     { icon: ExternalLink, label: "Blog", href: "#blog" },
   ];
@@ -48,6 +91,47 @@ const ModernPortfolioWebsite = () => {
     if (videoRef.current) {
       videoRef.current.volume = newVolume;
     }
+  };
+
+  // Gallery navigation functions
+  const scrollGalleryLeft = () => {
+    if (galleryRef.current) {
+      const scrollAmount = 320; // width of one card plus gap
+      galleryRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const scrollGalleryRight = () => {
+    if (galleryRef.current) {
+      const scrollAmount = 320; // width of one card plus gap
+      galleryRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  // Touch handling for mobile swipe
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    galleryRef.current.touchStartX = touch.clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!galleryRef.current.touchStartX) return;
+    
+    const touch = e.touches[0];
+    const diff = galleryRef.current.touchStartX - touch.clientX;
+    
+    if (Math.abs(diff) > 50) { // minimum swipe distance
+      if (diff > 0) {
+        scrollGalleryRight();
+      } else {
+        scrollGalleryLeft();
+      }
+      galleryRef.current.touchStartX = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    galleryRef.current.touchStartX = null;
   };
 
   useEffect(() => {
@@ -176,32 +260,51 @@ const ModernPortfolioWebsite = () => {
               </div>
             </div>
 
-            {/* Video Controls */}
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-4">
-                <button
-                  onClick={handlePlayPause}
-                  className="w-14 h-14 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 hover:scale-110"
-                >
-                  {isPlaying ? <Pause className="text-white w-6 h-6" /> : <Play className="text-white w-6 h-6 ml-1" />}
-                </button>
-                
-                <div className="flex items-center space-x-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2">
-                  <button onClick={handleMuteToggle} className="text-white hover:scale-110 transition-transform">
-                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                  </button>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                    value={volume}
-                    onChange={handleVolumeChange}
-                    className="w-16 accent-orange-500"
-                  />
-                </div>
-              </div>
-            </div>
+           {/* Video Card */}
+<div className="relative group mb-16 fade-in-up">
+  <div className="relative w-80 h-52 md:w-96 md:h-60 lg:w-[480px] lg:h-72 rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-700 group-hover:scale-105 group-hover:shadow-3xl">
+    <video
+      ref={videoRef}
+      className="w-full h-full object-cover"
+      src="/hero_video.mp4"
+      autoPlay
+      loop
+      muted={isMuted}
+      playsInline
+    />
+    {/* Overlay */}
+    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-4">
+        <button
+          onClick={handlePlayPause}
+          className="w-14 h-14 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 hover:scale-110"
+        >
+          {isPlaying ? <Pause className="text-white w-6 h-6" /> : <Play className="text-white w-6 h-6 ml-1" />}
+        </button>
+
+        <div className="flex items-center space-x-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2">
+          <button onClick={handleMuteToggle} className="text-white hover:scale-110 transition-transform">
+            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          </button>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={volume}
+            onChange={handleVolumeChange}
+            className="w-16 accent-orange-500"
+          />
+        </div>
+      </div>
+    </div>
+
+    {/* Decorative Elements */}
+    <div className="absolute -top-4 -right-4 w-8 h-8 bg-orange-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"></div>
+    <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-purple-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"></div>
+  </div>
+</div>
+
 
             {/* Decorative Elements */}
             <div className="absolute -top-4 -right-4 w-8 h-8 bg-orange-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"></div>
@@ -210,21 +313,28 @@ const ModernPortfolioWebsite = () => {
         </div>
 
         {/* Navigation Links */}
-        <div className="flex flex-wrap justify-center gap-4 md:gap-6 fade-in-up">
-          {navLinks.map((link, index) => (
-            <a
-              key={index}
-              href={link.href}
-              className="group relative w-16 h-16 md:w-18 md:h-18 bg-white bg-opacity-80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <link.icon className="w-6 h-6 md:w-7 md:h-7 text-amber-700 group-hover:text-orange-600 transition-colors" />
-              <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                {link.label}
-              </div>
-            </a>
-          ))}
-        </div>
+        {/* Navigation Buttons */}
+<div className="flex flex-wrap justify-center gap-6 fade-in-up">
+  {/* Email Button */}
+  <a
+    href="mailto:gabrielkadiwa@gmail.com"
+    className="group flex items-center space-x-3 bg-white bg-opacity-80 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-opacity-100 transition-all duration-300 hover:scale-105 shadow-lg text-gray-800"
+  >
+    <Mail className="w-5 h-5 text-orange-600 group-hover:text-purple-600 transition-colors" />
+    <span className="font-medium">Email Gabriel</span>
+  </a>
+
+  {/* Download CV Button */}
+  <a
+    href="/cv.pdf"
+    download
+    className="group flex items-center space-x-3 bg-gradient-to-r from-orange-500 to-purple-600 px-6 py-3 rounded-full hover:from-orange-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 text-white shadow-lg"
+  >
+    <Download className="w-5 h-5 group-hover:animate-bounce" />
+    <span className="font-medium">Download CV</span>
+  </a>
+</div>
+
 
         {/* Floating Title */}
         <div className="absolute top-8 left-8 fade-in-up">
@@ -236,44 +346,118 @@ const ModernPortfolioWebsite = () => {
       </section>
 
       {/* Gallery Section */}
-      <section className="py-20 px-6 overflow-hidden bg-gradient-to-r from-orange-100 via-purple-100 to-amber-100">
-        <div className="text-center mb-16 fade-in-up">
-          <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-4">
-            Featured <span className="text-purple-600">Works</span>
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            A curated collection of creative projects and artistic endeavors
-          </p>
-        </div>
+<section className="py-20 px-6 overflow-hidden bg-gradient-to-r from-orange-100 via-purple-100 to-amber-100">
+  <div className="text-center mb-16 fade-in-up">
+    <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-4">
+      Featured <span className="text-purple-600">Works</span>
+    </h2>
+    <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+      A curated collection of creative projects and artistic endeavors
+    </p>
+  </div>
 
-        {/* Scrolling Gallery */}
-        <div className="relative">
-          <div className="flex space-x-8 animate-scroll-left">
-            {[...galleryImages, ...galleryImages].map((image, index) => (
-              <div
-                key={`${image.id}-${index}`}
-                className="flex-shrink-0 group cursor-pointer"
-              >
-                <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-105">
-                  <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
-                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                    <div className="absolute inset-0 flex flex-col justify-end p-8">
-                      <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        <p className="text-sm opacity-80 mb-2">{image.category}</p>
-                        <h3 className="text-2xl font-light">{image.title}</h3>
-                      </div>
+  {/* Gallery Container with Navigation */}
+  <div className="relative">
+    {/* Desktop Navigation Buttons */}
+    <button
+      onClick={scrollGalleryLeft}
+      className="hidden md:flex absolute left-8 top-1/2 transform -translate-y-1/2 z-20 w-14 h-14 bg-white bg-opacity-95 backdrop-blur-sm rounded-full items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100 group border border-gray-200"
+    >
+      <ChevronLeft className="w-7 h-7 text-gray-700 group-hover:text-orange-600 transition-colors" />
+    </button>
+    
+    <button
+      onClick={scrollGalleryRight}
+      className="hidden md:flex absolute right-8 top-1/2 transform -translate-y-1/2 z-20 w-14 h-14 bg-white bg-opacity-95 backdrop-blur-sm rounded-full items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100 group border border-gray-200"
+    >
+      <ChevronRight className="w-7 h-7 text-gray-700 group-hover:text-orange-600 transition-colors" />
+    </button>
+
+    {/* Scrolling Gallery */}
+    <div className="relative overflow-hidden">
+      {/* Mobile: Auto-scrolling */}
+      <div className="md:hidden">
+        <div className="flex space-x-8 animate-scroll-left">
+          {[...galleryImages, ...galleryImages].map((image, index) => (
+            <div
+              key={`${image.id}-${index}`}
+              className="flex-shrink-0 group cursor-pointer"
+            >
+              <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-105">
+                <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
+                  <img
+                    src={image.src}
+                    alt={image.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                  <div className="absolute inset-0 flex flex-col justify-end p-8">
+                    <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-sm opacity-80 mb-2">{image.category}</p>
+                      <h3 className="text-2xl font-light">{image.title}</h3>
                     </div>
-                    {/* Decorative Pattern */}
-                    <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
-                      <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
-                    </div>
+                  </div>
+                  <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
+                    <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      </section>
+      </div>
+
+      {/* Desktop: Manual scroll */}
+      <div className="hidden md:block">
+        <div 
+          ref={galleryRef}
+          className="flex space-x-8 overflow-x-auto scrollbar-hide scroll-smooth"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{ 
+            scrollSnapType: 'x mandatory',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
+          {galleryImages.map((image, index) => (
+            <div
+              key={`${image.id}-${index}`}
+              className="flex-shrink-0 group cursor-pointer"
+              style={{ scrollSnapAlign: 'start' }}
+            >
+              <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-105">
+                <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
+                  <img
+                    src={image.src}
+                    alt={image.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                  <div className="absolute inset-0 flex flex-col justify-end p-8">
+                    <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-sm opacity-80 mb-2">{image.category}</p>
+                      <h3 className="text-2xl font-light">{image.title}</h3>
+                    </div>
+                  </div>
+                  <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
+                    <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Footer */}
       <footer className="py-16 px-6 bg-gradient-to-r from-gray-900 via-purple-900 to-amber-900">
@@ -284,7 +468,7 @@ const ModernPortfolioWebsite = () => {
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <a
-              href="mailto:hello@creative.com"
+              href="mailto:gabrielkadiwa@gmail.com"
               className="group flex items-center space-x-3 bg-white bg-opacity-10 backdrop-blur-sm px-8 py-4 rounded-full hover:bg-opacity-20 transition-all duration-300 hover:scale-105 text-white"
             >
               <Mail className="w-5 h-5 group-hover:text-orange-400 transition-colors" />
@@ -292,7 +476,7 @@ const ModernPortfolioWebsite = () => {
             </a>
             
             <a
-              href="/cv.pdf"
+              href="/CV_Gabriel_Kadiwa_Graphic_Design.pdf"
               download
               className="group flex items-center space-x-3 bg-gradient-to-r from-orange-500 to-purple-600 px-8 py-4 rounded-full hover:from-orange-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 text-white shadow-lg"
             >
@@ -392,6 +576,16 @@ const ModernPortfolioWebsite = () => {
         
         .shadow-3xl {
           box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Hide scrollbar but allow scrolling */
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
         }
         
         /* Custom scrollbar for volume control */

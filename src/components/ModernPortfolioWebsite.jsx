@@ -8,6 +8,12 @@ const ModernPortfolioWebsite = () => {
   const [galleryScrollPosition, setGalleryScrollPosition] = useState(0);
   const videoRef = useRef(null);
   const galleryRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalImageSrc, setModalImageSrc] = useState("");
+  const touchStartX = useRef(null);
+
+
 
   const imageData = [
   { filename: 'Lazybee.jpg', tag: 'Logos' },
@@ -339,14 +345,14 @@ const galleryImages = imageData.map((image, index) => {
         {/* Floating Title */}
         <div className="absolute top-8 left-8 fade-in-up">
           <h1 className="text-2xl md:text-3xl font-light text-gray-800">
-            Creative
+            Gabriel's
             <span className="block text-orange-600 font-medium">Portfolio</span>
           </h1>
         </div>
       </section>
 
-      {/* Gallery Section */}
-<section className="py-20 px-6 overflow-hidden bg-gradient-to-r from-orange-100 via-purple-100 to-amber-100">
+     {/* Gallery Section */}
+<section className="py-20 px-6 bg-gradient-to-r from-orange-100 via-purple-100 to-amber-100">
   <div className="text-center mb-16 fade-in-up">
     <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-4">
       Featured <span className="text-purple-600">Works</span>
@@ -356,111 +362,101 @@ const galleryImages = imageData.map((image, index) => {
     </p>
   </div>
 
-  {/* Gallery Container with Navigation */}
-  <div className="relative">
-    {/* Desktop Navigation Buttons */}
+  <div className="relative w-full max-w-4xl mx-auto">
+<p className="text-gray-600 max-w-2xl mx-auto text-lg">
+      Swipe Left or right  for more images...
+    </p>
+    {/* Navigation Buttons */}
     <button
-      onClick={scrollGalleryLeft}
-      className="hidden md:flex absolute left-8 top-1/2 transform -translate-y-1/2 z-20 w-14 h-14 bg-white bg-opacity-95 backdrop-blur-sm rounded-full items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100 group border border-gray-200"
+      onClick={() => setCurrentIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1))}
+      className="hidden md:flex absolute left-4 top-1/2 transform -translate-y-1/2 z-30 bg-white bg-opacity-90 p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300"
     >
-      <ChevronLeft className="w-7 h-7 text-gray-700 group-hover:text-orange-600 transition-colors" />
-    </button>
-    
-    <button
-      onClick={scrollGalleryRight}
-      className="hidden md:flex absolute right-8 top-1/2 transform -translate-y-1/2 z-20 w-14 h-14 bg-white bg-opacity-95 backdrop-blur-sm rounded-full items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100 group border border-gray-200"
-    >
-      <ChevronRight className="w-7 h-7 text-gray-700 group-hover:text-orange-600 transition-colors" />
+      <ChevronLeft className="w-6 h-6 text-gray-800" />
     </button>
 
-    {/* Scrolling Gallery */}
-    <div className="relative overflow-hidden">
-      {/* Mobile: Auto-scrolling */}
-      <div className="md:hidden">
-        <div className="flex space-x-8 animate-scroll-left">
-          {[...galleryImages, ...galleryImages].map((image, index) => (
-            <div
-                key={`${image.id}-${index}`}
-                className="flex-shrink-0 group cursor-pointer"
-                style={{ scrollSnapAlign: 'start' }}
-              >
-                <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl transition-transform duration-700 transform group-hover:rotate-3 group-hover:scale-105 group-hover:shadow-2xl">
-                  <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
-                    <img
-                      src={image.src}
-                      alt={image.title}
-                      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                    <div className="absolute inset-0 flex flex-col justify-end p-8">
-                      <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        <p className="text-sm opacity-80 mb-2">{image.category}</p>
-                        <h3 className="text-2xl font-light">{image.title}</h3>
-                      </div>
-                    </div>
-                    <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
-                      <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+    <button
+      onClick={() => setCurrentIndex((prev) => (prev + 1) % galleryImages.length)}
+      className="hidden md:flex absolute right-4 top-1/2 transform -translate-y-1/2 z-30 bg-white bg-opacity-90 p-4 rounded-full shadow-lg hover:scale-110 transition-all duration-300"
+    >
+      <ChevronRight className="w-6 h-6 text-gray-800" />
+    </button>
 
-          ))}
-        </div>
-      </div>
-
-      {/* Desktop: Manual scroll */}
-      <div className="hidden md:block">
-        <div 
-          ref={galleryRef}
-          className="flex space-x-8 overflow-x-auto scrollbar-hide scroll-smooth"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          style={{ 
-            scrollSnapType: 'x mandatory',
-            WebkitOverflowScrolling: 'touch'
-          }}
+    <div
+      className="overflow-hidden w-full h-[400px] relative rounded-xl"
+      onTouchStart={(e) => (touchStartX.current = e.touches[0].clientX)}
+      onTouchEnd={(e) => {
+        const diff = touchStartX.current - e.changedTouches[0].clientX;
+        if (diff > 50) {
+          setCurrentIndex((prev) => (prev + 1) % galleryImages.length);
+        } else if (diff < -50) {
+          setCurrentIndex((prev) =>
+            prev === 0 ? galleryImages.length - 1 : prev - 1
+          );
+        }
+        touchStartX.current = null;
+      }}
+    >
+      {galleryImages.map((image, index) => (
+        <div
+          key={image.id}
+          className={`absolute top-0 left-0 w-full h-full transition-all duration-700 ease-in-out transform ${
+            index === currentIndex
+              ? 'opacity-100 rotate-0 scale-100 z-20'
+              : 'opacity-0 -rotate-12 scale-95 z-10 pointer-events-none'
+          }`}
         >
-          {galleryImages.map((image, index) => (
-            <div
-                key={`${image.id}-${index}`}
-                className="flex-shrink-0 group cursor-pointer"
-                style={{ scrollSnapAlign: 'start' }}
-              >
-                <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl transition-transform duration-700 transform group-hover:rotate-3 group-hover:scale-105 group-hover:shadow-2xl">
-                  <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
-                    <img
-                      src={image.src}
-                      alt={image.title}
-                      className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
-                    <div className="absolute inset-0 flex flex-col justify-end p-8">
-                      <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        <p className="text-sm opacity-80 mb-2">{image.category}</p>
-                        <h3 className="text-2xl font-light">{image.title}</h3>
-                      </div>
-                    </div>
-                    <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
-                      <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-          ))}
+          <div
+            className={`w-full h-full bg-gradient-to-br ${image.color} rounded-xl overflow-hidden relative cursor-pointer`}
+            onClick={() => {
+              setModalImageSrc(image.src);
+              setIsModalOpen(true);
+              document.body.style.overflow = 'hidden';
+            }}
+          >
+            <img
+              src={image.src}
+              alt={image.title}
+              className="w-full h-full object-cover opacity-80"
+              onError={(e) => (e.target.style.display = 'none')}
+            />
+            <div className="absolute bottom-0 left-0 p-6 text-white bg-black bg-opacity-40 w-full">
+              <p className="text-sm">{image.category}</p>
+              <h3 className="text-2xl font-light">{image.title}</h3>
+            </div>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
+
+    <button
+      onClick={() =>
+        setCurrentIndex((prev) => (prev + 1) % galleryImages.length)
+      }
+      className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 p-3 rounded-full shadow hover:scale-110 z-10"
+    >
+      <ChevronRight className="w-6 h-6 text-orange-600" />
+    </button>
   </div>
 </section>
+
+{/* Modal for enlarged image */}
+{isModalOpen && (
+  <div
+    className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center"
+    onClick={() => {
+      setIsModalOpen(false);
+      setModalImageSrc("");
+      document.body.style.overflow = 'auto';
+    }}
+  >
+    <img
+      src={modalImageSrc}
+      alt="Enlarged work"
+      className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+    />
+  </div>
+)}
+
 
       {/* Footer */}
       <footer className="py-16 px-6 bg-gradient-to-r from-gray-900 via-purple-900 to-amber-900">
@@ -611,6 +607,17 @@ const galleryImages = imageData.map((image, index) => {
           border-radius: 50%;
           cursor: pointer;
         }
+
+        .fade-in-up {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: all 0.8s ease-out;
+        }
+        .fade-in-up.animate-in {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
       `}</style>
     </div>
   );

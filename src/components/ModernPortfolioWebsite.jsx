@@ -486,7 +486,7 @@ const galleryImages = imageData.map((image, index) => {
 
           <div className="mt-12 pt-8 border-t border-white border-opacity-20">
             <p className="text-white text-opacity-60 text-sm">
-              © 2025 Creative Portfolio. Crafted with passion and precision.
+              © 2025 Gabriel Kadiwa. Crafted with passion and precision.
             </p>
           </div>
         </div>

@@ -7,6 +7,7 @@ A modern, animated portfolio website built with **React**, **Tailwind CSS**, and
 - ⚡ Responsive and mobile-friendly design
 - 🖼️ Dynamic gallery powered by local images (`/public/portfolio/`)
 - 📹 Custom video hero section (`/public/hero_video.mp4`)
+- Hero video created with ChatGPT, KlingAI, ElevenLabs & Capcut
 - 💌 Contact and CV download buttons
 - 🌈 Animated gradients, smooth transitions, and scroll effects
 

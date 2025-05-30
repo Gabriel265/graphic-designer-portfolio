@@ -1,0 +1,590 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Play, Pause, Volume2, VolumeX, Mail, Download, ExternalLink, Globe, Camera, Palette, Code, ChevronLeft, ChevronRight } from 'lucide-react';
+
+const ModernPortfolioWebsite = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [volume, setVolume] = useState(0.5);
+  const [galleryScrollPosition, setGalleryScrollPosition] = useState(0);
+  const videoRef = useRef(null);
+  const galleryRef = useRef(null);
+
+  const imageData = [
+  { filename: 'Lazybee.jpg', tag: 'Logos' },
+  { filename: 'Lazybee_2.jpg', tag: 'Logos' },
+  { filename: 'wedding_1.jpg', tag: 'Posters' },
+  { filename: 'wedding_2.jpg', tag: 'Posters' },
+  { filename: 'nike.jpg', tag: 'Branding' },
+  { filename: 'nike_2.jpg', tag: 'Branding' },
+  { filename: 'Kadion-Systems.jpg', tag: 'Logos' },
+  { filename: 'Kaycee-Tutoring.jpg', tag: 'Logos' },
+  { filename: 'wedding_3.jpg', tag: 'Posters' },
+  { filename: 'wedding_4.jpg', tag: 'Posters' },
+  { filename: 'imperfection.jpg', tag: 'Branding' },
+  { filename: 'k-dot.jpg', tag: 'Branding' },
+  { filename: 'wedding_5.jpg', tag: 'Posters' },
+  { filename: 'wedding_6.jpg', tag: 'Posters' },
+  { filename: 'wedding_8.jpg', tag: 'Posters' },
+  { filename: 'wedding_9.jpg', tag: 'Posters' },
+  { filename: 'boxing-day.jpg', tag: 'Branding' },
+  { filename: 'contract.jpg', tag: 'Branding' },
+  { filename: 'dice.jpg', tag: 'Branding' },
+  { filename: 'goal.jpg', tag: 'Branding' },
+  { filename: 'kendrick_Lamar.jpg', tag: 'Branding' },
+  { filename: 'planet.jpg', tag: 'Branding' }
+];
+
+const galleryImages = imageData.map((image, index) => {
+  let color;
+  switch (image.tag) {
+    case 'Logos':
+      color = "from-purple-500 to-pink-600";
+      break;
+    case 'Posters':
+      color = "from-orange-500 to-purple-600";
+      break;
+    case 'Branding':
+      color = "from-amber-500 to-red-600";
+      break;
+    default:
+      color = "from-gray-400 to-gray-600";
+  }
+
+  return {
+    id: index + 1,
+    title: image.filename.replace(/\.[^/.]+$/, "").replace(/_/g, " "),
+    category: image.tag,
+    color,
+    src: `/portfolio/${image.filename}`
+  };
+});
+
+  const navLinks = [
+    { icon: Globe, label: "Portfolio", href: "#portfolio" },
+    { icon: Camera, label: "Gallery", href: "#gallery" },
+    { icon: Palette, label: "Art", href: "#art" },
+    { icon: Code, label: "Projects", href: "#projects" },
+    { icon: ExternalLink, label: "Blog", href: "#blog" },
+  ];
+
+  const handlePlayPause = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleMuteToggle = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
+
+  const handleVolumeChange = (e) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume;
+    }
+  };
+
+  // Gallery navigation functions
+  const scrollGalleryLeft = () => {
+    if (galleryRef.current) {
+      const scrollAmount = 320; // width of one card plus gap
+      galleryRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const scrollGalleryRight = () => {
+    if (galleryRef.current) {
+      const scrollAmount = 320; // width of one card plus gap
+      galleryRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  // Touch handling for mobile swipe
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    galleryRef.current.touchStartX = touch.clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!galleryRef.current.touchStartX) return;
+    
+    const touch = e.touches[0];
+    const diff = galleryRef.current.touchStartX - touch.clientX;
+    
+    if (Math.abs(diff) > 50) { // minimum swipe distance
+      if (diff > 0) {
+        scrollGalleryRight();
+      } else {
+        scrollGalleryLeft();
+      }
+      galleryRef.current.touchStartX = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    galleryRef.current.touchStartX = null;
+  };
+
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in-up').forEach(el => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-purple-50">
+      {/* Hero Section */}
+      <section className="min-h-screen flex flex-col items-center justify-center p-6 md:p-12 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-20 w-32 h-32 bg-orange-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-40 h-40 bg-purple-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-amber-400 rounded-full blur-3xl"></div>
+        </div>
+
+        {/* Paint Splash Artwork */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Large Orange Paint Splash - Top Right */}
+          <div className="absolute top-10 right-10 w-80 h-80 opacity-10">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <path
+                d="M50 100 C50 50, 100 20, 150 50 C180 70, 190 120, 160 150 C130 180, 80 170, 60 140 C40 120, 45 110, 50 100 Z"
+                fill="url(#orangeSplash)"
+                className="animate-pulse-slow"
+              />
+              <defs>
+                <linearGradient id="orangeSplash" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#f97316" />
+                  <stop offset="100%" stopColor="#ea580c" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Medium Purple Paint Splash - Bottom Left */}
+          <div className="absolute bottom-20 left-5 w-60 h-60 opacity-15">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <path
+                d="M100 50 C120 30, 160 40, 170 80 C180 120, 150 160, 110 170 C70 180, 30 150, 40 110 C50 70, 80 60, 100 50 Z"
+                fill="url(#purpleSplash)"
+                className="animate-float"
+              />
+              <defs>
+                <linearGradient id="purpleSplash" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#a855f7" />
+                  <stop offset="100%" stopColor="#7c3aed" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Small Amber Paint Drip - Top Left */}
+          <div className="absolute top-32 left-20 w-40 h-60 opacity-20">
+            <svg viewBox="0 0 100 150" className="w-full h-full">
+              <path
+                d="M50 20 C60 15, 70 25, 65 40 L60 60 C58 80, 55 100, 50 120 C45 140, 40 145, 35 140 C30 135, 35 120, 40 100 C42 80, 45 60, 40 40 C35 25, 40 15, 50 20 Z"
+                fill="url(#amberDrip)"
+                className="animate-drip"
+              />
+              <defs>
+                <linearGradient id="amberDrip" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#f59e0b" />
+                  <stop offset="100%" stopColor="#d97706" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Abstract Paint Stroke - Center Right */}
+          <div className="absolute top-1/2 right-5 w-32 h-80 opacity-8 transform -translate-y-1/2 rotate-12">
+            <svg viewBox="0 0 50 200" className="w-full h-full">
+              <path
+                d="M25 10 C30 15, 35 25, 30 40 C25 55, 20 70, 25 85 C30 100, 35 115, 30 130 C25 145, 20 160, 25 175 C30 185, 25 190, 20 185 C15 180, 10 165, 15 150 C20 135, 25 120, 20 105 C15 90, 10 75, 15 60 C20 45, 25 30, 20 15 C18 10, 22 8, 25 10 Z"
+                fill="url(#strokeGradient)"
+                className="animate-wave"
+              />
+              <defs>
+                <linearGradient id="strokeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#f97316" />
+                  <stop offset="50%" stopColor="#a855f7" />
+                  <stop offset="100%" stopColor="#f59e0b" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* Small Paint Dots */}
+          <div className="absolute top-40 right-40 w-4 h-4 bg-orange-400 rounded-full opacity-30 animate-ping"></div>
+          <div className="absolute bottom-40 right-60 w-3 h-3 bg-purple-500 rounded-full opacity-40 animate-pulse"></div>
+          <div className="absolute top-60 left-40 w-5 h-5 bg-amber-500 rounded-full opacity-25 animate-bounce"></div>
+        </div>
+
+        {/* Video Card */}
+        <div className="relative group mb-16 fade-in-up">
+          <div className="relative w-80 h-52 md:w-96 md:h-60 lg:w-[480px] lg:h-72 rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-700 group-hover:scale-105 group-hover:shadow-3xl">
+            {/* Placeholder Video Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-600 via-purple-600 to-amber-700">
+              <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-white text-center">
+                  <div className="w-24 h-24 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-4 mx-auto backdrop-blur-sm">
+                    <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-purple-500 rounded-full"></div>
+                  </div>
+                  <h3 className="text-xl font-light">Creative Showcase</h3>
+                  <p className="text-sm opacity-80 mt-2">Interactive Experience</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Video Controls */}
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center space-x-4">
+                <button
+                  onClick={handlePlayPause}
+                  className="w-14 h-14 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-200 hover:scale-110"
+                >
+                  {isPlaying ? <Pause className="text-white w-6 h-6" /> : <Play className="text-white w-6 h-6 ml-1" />}
+                </button>
+                
+                <div className="flex items-center space-x-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2">
+                  <button onClick={handleMuteToggle} className="text-white hover:scale-110 transition-transform">
+                    {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  </button>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    className="w-16 accent-orange-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Decorative Elements */}
+            <div className="absolute -top-4 -right-4 w-8 h-8 bg-orange-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-purple-500 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"></div>
+          </div>
+        </div>
+
+        {/* Navigation Links */}
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6 fade-in-up">
+          {navLinks.map((link, index) => (
+            <a
+              key={index}
+              href={link.href}
+              className="group relative w-16 h-16 md:w-18 md:h-18 bg-white bg-opacity-80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <link.icon className="w-6 h-6 md:w-7 md:h-7 text-amber-700 group-hover:text-orange-600 transition-colors" />
+              <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                {link.label}
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* Floating Title */}
+        <div className="absolute top-8 left-8 fade-in-up">
+          <h1 className="text-2xl md:text-3xl font-light text-gray-800">
+            Creative
+            <span className="block text-orange-600 font-medium">Portfolio</span>
+          </h1>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+<section className="py-20 px-6 overflow-hidden bg-gradient-to-r from-orange-100 via-purple-100 to-amber-100">
+  <div className="text-center mb-16 fade-in-up">
+    <h2 className="text-4xl md:text-5xl font-light text-gray-800 mb-4">
+      Featured <span className="text-purple-600">Works</span>
+    </h2>
+    <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+      A curated collection of creative projects and artistic endeavors
+    </p>
+  </div>
+
+  {/* Gallery Container with Navigation */}
+  <div className="relative">
+    {/* Desktop Navigation Buttons */}
+    <button
+      onClick={scrollGalleryLeft}
+      className="hidden md:flex absolute left-8 top-1/2 transform -translate-y-1/2 z-20 w-14 h-14 bg-white bg-opacity-95 backdrop-blur-sm rounded-full items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100 group border border-gray-200"
+    >
+      <ChevronLeft className="w-7 h-7 text-gray-700 group-hover:text-orange-600 transition-colors" />
+    </button>
+    
+    <button
+      onClick={scrollGalleryRight}
+      className="hidden md:flex absolute right-8 top-1/2 transform -translate-y-1/2 z-20 w-14 h-14 bg-white bg-opacity-95 backdrop-blur-sm rounded-full items-center justify-center shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-opacity-100 group border border-gray-200"
+    >
+      <ChevronRight className="w-7 h-7 text-gray-700 group-hover:text-orange-600 transition-colors" />
+    </button>
+
+    {/* Scrolling Gallery */}
+    <div className="relative overflow-hidden">
+      {/* Mobile: Auto-scrolling */}
+      <div className="md:hidden">
+        <div className="flex space-x-8 animate-scroll-left">
+          {[...galleryImages, ...galleryImages].map((image, index) => (
+            <div
+              key={`${image.id}-${index}`}
+              className="flex-shrink-0 group cursor-pointer"
+            >
+              <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-105">
+                <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
+                  <img
+                    src={image.src}
+                    alt={image.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                  <div className="absolute inset-0 flex flex-col justify-end p-8">
+                    <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-sm opacity-80 mb-2">{image.category}</p>
+                      <h3 className="text-2xl font-light">{image.title}</h3>
+                    </div>
+                  </div>
+                  <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
+                    <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Desktop: Manual scroll */}
+      <div className="hidden md:block">
+        <div 
+          ref={galleryRef}
+          className="flex space-x-8 overflow-x-auto scrollbar-hide scroll-smooth"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{ 
+            scrollSnapType: 'x mandatory',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
+          {galleryImages.map((image, index) => (
+            <div
+              key={`${image.id}-${index}`}
+              className="flex-shrink-0 group cursor-pointer"
+              style={{ scrollSnapAlign: 'start' }}
+            >
+              <div className="w-80 h-96 rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-500 group-hover:scale-105">
+                <div className={`w-full h-full bg-gradient-to-br ${image.color} relative`}>
+                  <img
+                    src={image.src}
+                    alt={image.title}
+                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-10 transition-all duration-300"></div>
+                  <div className="absolute inset-0 flex flex-col justify-end p-8">
+                    <div className="text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <p className="text-sm opacity-80 mb-2">{image.category}</p>
+                      <h3 className="text-2xl font-light">{image.title}</h3>
+                    </div>
+                  </div>
+                  <div className="absolute top-4 right-4 w-12 h-12 border-2 border-white border-opacity-30 rounded-full flex items-center justify-center group-hover:border-opacity-60 transition-all">
+                    <div className="w-4 h-4 bg-white bg-opacity-40 rounded-full group-hover:bg-opacity-80 transition-all"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      {/* Footer */}
+      <footer className="py-16 px-6 bg-gradient-to-r from-gray-900 via-purple-900 to-amber-900">
+        <div className="max-w-4xl mx-auto text-center fade-in-up">
+          <h3 className="text-3xl font-light text-white mb-8">
+            Let's Create <span className="text-orange-400">Together</span>
+          </h3>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <a
+              href="mailto:hello@creative.com"
+              className="group flex items-center space-x-3 bg-white bg-opacity-10 backdrop-blur-sm px-8 py-4 rounded-full hover:bg-opacity-20 transition-all duration-300 hover:scale-105 text-white"
+            >
+              <Mail className="w-5 h-5 group-hover:text-orange-400 transition-colors" />
+              <span className="font-medium">Contact via Email</span>
+            </a>
+            
+            <a
+              href="/cv.pdf"
+              download
+              className="group flex items-center space-x-3 bg-gradient-to-r from-orange-500 to-purple-600 px-8 py-4 rounded-full hover:from-orange-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 text-white shadow-lg"
+            >
+              <Download className="w-5 h-5 group-hover:animate-bounce" />
+              <span className="font-medium">Download CV</span>
+            </a>
+          </div>
+
+          <div className="mt-12 pt-8 border-t border-white border-opacity-20">
+            <p className="text-white text-opacity-60 text-sm">
+              © 2025 Creative Portfolio. Crafted with passion and precision.
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      <style jsx>{`
+        @keyframes scroll-left {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+          }
+          50% {
+            transform: translateY(-10px) rotate(2deg);
+          }
+        }
+        
+        @keyframes drip {
+          0%, 100% {
+            transform: scaleY(1);
+          }
+          50% {
+            transform: scaleY(1.1);
+          }
+        }
+        
+        @keyframes wave {
+          0%, 100% {
+            transform: translateX(0px);
+          }
+          50% {
+            transform: translateX(5px);
+          }
+        }
+        
+        @keyframes pulse-slow {
+          0%, 100% {
+            opacity: 0.1;
+          }
+          50% {
+            opacity: 0.2;
+          }
+        }
+        
+        .animate-scroll-left {
+          animation: scroll-left 30s linear infinite;
+        }
+        
+        .animate-scroll-left:hover {
+          animation-play-state: paused;
+        }
+        
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-drip {
+          animation: drip 4s ease-in-out infinite;
+        }
+        
+        .animate-wave {
+          animation: wave 8s ease-in-out infinite;
+        }
+        
+        .animate-pulse-slow {
+          animation: pulse-slow 3s ease-in-out infinite;
+        }
+        
+        .fade-in-up {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: all 0.8s ease-out;
+        }
+        
+        .fade-in-up.animate-in {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        
+        .shadow-3xl {
+          box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Hide scrollbar but allow scrolling */
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        
+        /* Custom scrollbar for volume control */
+        input[type="range"] {
+          background: transparent;
+          -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-track {
+          background: rgba(255, 255, 255, 0.3);
+          height: 4px;
+          border-radius: 2px;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          background: #f97316;
+          height: 12px;
+          width: 12px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default ModernPortfolioWebsite;

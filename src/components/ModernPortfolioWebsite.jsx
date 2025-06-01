@@ -332,7 +332,7 @@ const galleryImages = imageData.map((image, index) => {
 
   {/* Download CV Button */}
   <a
-    href="/cv.pdf"
+    href="/CV_Gabriel_Kadiwa_Graphic_Design.pdf"
     download
     className="group flex items-center space-x-3 bg-gradient-to-r from-orange-500 to-purple-600 px-6 py-3 rounded-full hover:from-orange-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 text-white shadow-lg"
   >

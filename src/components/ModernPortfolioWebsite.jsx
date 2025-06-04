@@ -18,6 +18,8 @@ const ModernPortfolioWebsite = () => {
   const imageData = [
   { filename: 'Lazybee.jpg', tag: 'Logos' },
   { filename: 'Lazybee_2.jpg', tag: 'Logos' },
+  { filename: 'loans.jpg', tag: 'Posters' },
+  { filename: 'loans2.jpg', tag: 'Posters' },
   { filename: 'wedding_1.jpg', tag: 'Posters' },
   { filename: 'wedding_2.jpg', tag: 'Posters' },
   { filename: 'nike.jpg', tag: 'Branding' },
@@ -33,7 +35,6 @@ const ModernPortfolioWebsite = () => {
   { filename: 'wedding_8.jpg', tag: 'Posters' },
   { filename: 'wedding_9.jpg', tag: 'Posters' },
   { filename: 'boxing-day.jpg', tag: 'Branding' },
-  { filename: 'contract.jpg', tag: 'Branding' },
   { filename: 'dice.jpg', tag: 'Branding' },
   { filename: 'goal.jpg', tag: 'Branding' },
   { filename: 'kendrick_Lamar.jpg', tag: 'Branding' },
